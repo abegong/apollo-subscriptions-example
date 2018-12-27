@@ -15,8 +15,12 @@ import { onError } from "apollo-link-error";
 import { ApolloLink } from "apollo-link";
 import { WebSocketLink } from "apollo-link-ws";
 
+// console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^");
+// console.log(process.env.REACT_APP_WS_URI);
 const wsLink = new WebSocketLink({
-  uri: process.env.REACT_APP_WS_URI,
+  // uri: 'ws://127.0.0.1:3001/subscriptions',
+  uri: 'ws://127.0.0.1:5061/graphql',
+  // uri: process.env.REACT_APP_WS_URI,
   options: {
     reconnect: true
   }
@@ -35,7 +39,8 @@ const client = new ApolloClient({
     }),
     wsLink,
     new HttpLink({
-      uri: process.env.REACT_APP_API_URI,
+      // uri: 'http://localhost:3001/graphql/',//process.env.REACT_APP_API_URI,
+      uri: 'http://localhost:5061/graphql',
       credentials: "same-origin"
     })
   ]),
@@ -78,6 +83,8 @@ const PinsQuery = ({ children }) => (
         subscribeToMore({
           document: PINS_SUBSCRIPTION,
           updateQuery: (prev, { subscriptionData }) => {
+            console.log("?????")
+
             if (!subscriptionData.data || !subscriptionData.data.pinAdded)
               return prev;
             const newPinAdded = subscriptionData.data.pinAdded;
