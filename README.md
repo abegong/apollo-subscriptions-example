@@ -1,3 +1,20 @@
+# Hello GraphQL subscriptions, with a python back end...
+
+This repo contains a minimal example of 
+* subscriptions
+* running React (Apollo) on the front end, and
+* a python graphqQL server on the back end.
+
+The repo was forked from: https://github.com/GraphQLCollege/apollo-subscriptions-example. This was the simplest working example that I could find with of GraphQL subscriptions running on modern versions of React, GraphQL, and Apollo
+
+After forking, the major addition is `python_server/`, which replicates the functionality of `packages/server/` in python (graphene).
+I also made some minor changes to `packages/client/src/App.js` for compatibility.
+
+
+The README from the original repo is below.
+
+--------------------------------------------------------------------------------
+
 # Apollo Subscriptions Example
 
 ![Example](./pinapp.gif)
