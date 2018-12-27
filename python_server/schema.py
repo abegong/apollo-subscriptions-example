@@ -8,12 +8,18 @@ from graphene import (
     Mutation, NonNull
 )
 
+from rx import Observable, subjects
+
+#This example uses an in-memory list of dictionaries as a data store.
 pins = [{
     "id" : 0,
     "title" : "mona lisa",
     "link" : "",
     "image" : ""
 }]
+
+#Create a subject to handle pin_added subscriptions
+pin_added_subject = subjects.Subject()
 
 class Pin(ObjectType):
     id = Int()
@@ -30,7 +36,10 @@ class AddPin(Mutation):
     Output = Int
 
     def mutate(self, info, title, link, image):
+        #Get a new ID
         id_ = len(pins)
+
+        #Pack the new pin object, and "store" to the pin list.
         new_pin = {
             "id" : id_,
             "title": title,
@@ -39,12 +48,8 @@ class AddPin(Mutation):
         }
         pins.append(new_pin)
 
-        # subject.on_next({
-        #     "id": len(pins),
-        #     "message": message,
-        # })
-
-        subject.on_next(
+        #Notify subscribers that a pin has been added.
+        pin_added_subject.on_next(
             Pin(**new_pin)
         )
 
@@ -62,55 +67,16 @@ class Query(ObjectType):
         for i, pin in enumerate(pins):
             pins_as_obj_list.append(
                 Pin(**pin)
-                # # String("test")
-                # # "test"
-                # json.dumps({
-                #     "id": i,
-                #     "message":m,
-                # })
             )
 
         return pins_as_obj_list
 
-from rx import Observable, subjects
-
-subject = subjects.Subject()
-
 class Subscription(ObjectType):
 
     pin_added = Field(Pin)
-    # count_seconds = Int(up_to=Int())
-    # random_int = Field(RandomType)
-    # new_message = NonNull(String)
 
-    # def resolve_count_seconds(root, info, up_to=5):
-    #     return Observable.interval(1000)\
-    #         .map(lambda i: "{0}".format(i))\
-    #         .take_while(lambda i: int(i) <= up_to)
-
-    # def resolve_random_int(root, info):
-    #     return Observable.interval(1000)\
-    #         .map(lambda i: RandomType(seconds=i, random_int=random.randint(0, 500)))
-
-    def resolve_pin_added(root, info):#, user_id):
-        print("XXXXX")
-        print(root)
-        print(info)
-
-        return subject
-
-    # def resolve_new_message(root, info):#, user_id):
-    #     print("XXXXX")
-    #     print(root)
-    #     print(info)
-    #     # pass
-    #     # newMessage(userId: Int!): String!
-    #     # return Observable._create(1000)\
-    #     #     .map(lambda i: RandomType(seconds=i, random_int=random.randint(0, 500)))
-
-    #     return subject#.\
-    #         # filter(lambda msg: msg[0] == 'authors').\
-    #         # map(lambda msg: _resolve(msg[1]))
+    def resolve_pin_added(root, info):
+        return pin_added_subject
 
 schema = Schema(
     query=Query,

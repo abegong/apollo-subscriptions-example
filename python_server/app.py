@@ -7,8 +7,6 @@ from flask_cors import CORS
 from flask_graphql import GraphQLView
 from flask_sockets import Sockets
 
-from schema import schema
-
 from rx import Observable
 from graphql_ws.constants import GQL_DATA, GQL_COMPLETE
 from graphql_ws.gevent import GeventSubscriptionServer, SubscriptionObserver
@@ -17,6 +15,8 @@ from gevent import pywsgi
 from graphql.execution.executors.gevent import GeventExecutor as Executor
 from geventwebsocket.handler import WebSocketHandler
 
+
+from schema import schema
 from playground import TEMPLATE as PLAYGROUND_TEMPLATE
 
 
